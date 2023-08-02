@@ -45,6 +45,8 @@ function polygonClosed(points) {
   return ax === bx && ay === by;
 }
 
+const h = 0.5;
+
 var poly = [
   [ 0, 11 ],
   [ 70, 11 ],
@@ -53,38 +55,99 @@ var poly = [
   [ 0, 5 ],
 ];
 
-var p = new PoissonDiskSampling({
+var clip = [
+  [ 0.5, 12 ],
+  [ 69.5, 12 ],
+  [ 69.5, -1 ],
+  [ 0.5, -1 ],
+];
+
+poly = polygonClip(clip, poly);
+
+function long() {
+  var p = new PoissonDiskSampling({
     shape: [70, 11],
     minDistance: 1,
     maxDistance: 200,
-    tries: 20,
+    tries: 30,
     distanceFunction: p => d3.polygonContains(poly, p) ? 0 : 1,
-});
-var points = p.fill();
+  });
+  var points = p.fill();
 
-const delaunay = d3.Delaunay.from(points);
-const voronoi = delaunay.voronoi([0, 0, 70, 11]);
+  const delaunay = d3.Delaunay.from(points);
+  const voronoi = delaunay.voronoi([0, 0, 70, 11]);
 
-const h = 0.5;
-var polys = [];
+  var polys = [];
 
-for (let i = 0; i < points.length; i++) {
-  let g = voronoi.cellPolygon(i);
-  g = polygonClip(poly, g);
-  g.pop();
-  g = g.map(p => [ p[0], p[1], 0 ]);
-  g.push([ points[i][0], points[i][1], h ]);
+  for (let i = 0; i < points.length; i++) {
+    let g = voronoi.cellPolygon(i);
+    g = polygonClip(poly, g);
+    g.pop();
+    g = g.map(p => [ p[0], p[1], 0 ]);
+    g.push([ points[i][0], points[i][1], h ]);
 
-  let faces = [];
+    let faces = [];
 
-  for (let j = 0; j < g.length - 1; j++) {
-    faces.push([ j, (j + 1) % (g.length - 1), g.length - 1 ]);
+    for (let j = 0; j < g.length - 1; j++) {
+      faces.push([ j, (j + 1) % (g.length - 1), g.length - 1 ]);
+    }
+
+    faces.push(Array(g.length - 1).fill(0).map((e,i)=>g.length - i - 2));
+
+    polys.push([g, faces]);
   }
 
-  faces.push(Array(g.length - 1).fill(0).map((e,i)=>g.length - i - 2));
-
-  polys.push([g, faces]);
+  console.log("polys =");
+  console.log(JSON.stringify(polys));
+  console.log(";");
 }
 
-console.log("polys =");
-console.log(JSON.stringify(polys));
+function short() {
+  const t = poly[2][1];
+
+  var poly2 = [
+    [ 0, 11 ],
+    [ 15, 11 ],
+    [ 15, t ],
+    [ 0, t ],
+  ];
+
+  var p = new PoissonDiskSampling({
+    shape: [15, 11],
+    minDistance: 1,
+    maxDistance: 200,
+    tries: 30,
+    distanceFunction: p => d3.polygonContains(poly2, p) ? 0 : 1,
+  });
+  var points = p.fill();
+
+  const delaunay = d3.Delaunay.from(points);
+  const voronoi = delaunay.voronoi([0, 0, 15, 11]);
+
+  var polys = [];
+
+  for (let i = 0; i < points.length; i++) {
+    let g = voronoi.cellPolygon(i);
+    g = polygonClip(poly2, g);
+    g.pop();
+    g = g.map(p => [ p[0], p[1], 0 ]);
+    g.push([ points[i][0], points[i][1], h ]);
+
+    let faces = [];
+
+    for (let j = 0; j < g.length - 1; j++) {
+      faces.push([ j, (j + 1) % (g.length - 1), g.length - 1 ]);
+    }
+
+    faces.push(Array(g.length - 1).fill(0).map((e,i)=>g.length - i - 2));
+
+    polys.push([g, faces]);
+  }
+
+  console.log("polys2 =");
+  console.log(JSON.stringify(polys));
+  console.log(";");
+}
+
+long();
+short();

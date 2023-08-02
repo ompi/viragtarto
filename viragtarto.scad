@@ -33,10 +33,10 @@ module tarto() {
             [0, -15]
         ]);
 
-        translate([0, -16, 7])
+        translate([0, -16, 7.5])
         cube([35, 12, 1]);
 
-        translate([34, -16, 0])
+        translate([34.5, -16, 0])
         cube([1, 12, 8]);
     }
 }
@@ -53,6 +53,12 @@ module ur() {
 
 module minta() {
   for (p = polys) {
+    polyhedron(p[0], p[1]);
+  }
+}
+
+module minta2() {
+  for (p = polys2) {
     polyhedron(p[0], p[1]);
   }
 }
@@ -83,9 +89,23 @@ module viragtarto() {
     fel();
     fel();
 
-    translate([-35, -7, -15])
+    translate([-35, -7.5, -15])
     rotate([90, 0, 0])
     minta();
+
+    mirror([0, 1, 0])
+    translate([-35, -7.5, -15])
+    rotate([90, 0, 0])
+    minta();
+
+    translate([34.5, -7.5, -15])
+    rotate([90, 0, 90])
+    minta2();
+
+    mirror([1, 0, 0])
+    translate([34.5, -7.5, -15])
+    rotate([90, 0, 90])
+    minta2();
 }
 
 module darab_a() {
