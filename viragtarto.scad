@@ -1,22 +1,39 @@
 module lab() {
-    linear_extrude(height = 10)
-    polygon([
-        [0, 0],
-        [5, 0],
-        [15, -20],
-        [11, -20],
-        [0, -5]
-    ]);
+    difference() {
+        linear_extrude(height = 10)
+        polygon([
+            [0, 0],
+            [5, 0],
+            [15, -20],
+            [11, -20],
+            [0, -8]
+        ]);
+        a = atan2(10, 20);
+        s = 1.2;
+        translate([5, 0, 10])
+        rotate([a, -90, 0])
+        for (i = [0:18])
+            translate([s / 4, i * -s - s, 0])
+            cylinder(d = s, h = 10, $fn = 60);
+    }
 }
 
 module tarto() {
-    linear_extrude(height = 8)
-    polygon([
-        [0, -2],
-        [35, -2],
-        [35, -10],
-        [0, -15]
-    ]);
+    difference() {
+        linear_extrude(height = 8)
+        polygon([
+            [0, -2],
+            [35, -2],
+            [35, -10],
+            [0, -15]
+        ]);
+
+        translate([0, -16, 7])
+        cube([35, 12, 1]);
+
+        translate([34, -16, 0])
+        cube([1, 12, 8]);
+    }
 }
 
 module ur() {
