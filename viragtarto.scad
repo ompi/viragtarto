@@ -1,3 +1,8 @@
+include <minta.scad>;
+
+echo(polys[0][0]);
+echo(polys[0][1]);
+
 module lab() {
     difference() {
         linear_extrude(height = 10)
@@ -46,6 +51,12 @@ module ur() {
     ]);
 }
 
+module minta() {
+  for (p = polys) {
+    polyhedron(p[0], p[1]);
+  }
+}
+
 module viragtarto() {
     module negyed() {
         difference() {
@@ -55,16 +66,6 @@ module viragtarto() {
                 difference() {
                     rotate([90, 0, 0])
                     tarto();
-
-/*                    #translate([0, -8, -4])
-                    rotate([-90, 0, 0])
-                    scale([0.3,0.3,0.01])
-                    surface("noise.png");
-
-                    #translate([35, -10, -4])
-                    rotate([-90, 0, 90])
-                    scale([0.3,0.3,0.01])
-                    surface("noise.png");*/
                 }
             }
             rotate([90, 0, 0])
@@ -81,6 +82,10 @@ module viragtarto() {
     mirror([0, 1, 0])
     fel();
     fel();
+
+    translate([-35, -7, -15])
+    rotate([90, 0, 0])
+    minta();
 }
 
 module darab_a() {
